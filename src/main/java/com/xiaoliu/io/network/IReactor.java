@@ -1,5 +1,6 @@
 package com.xiaoliu.io.network;
 
+import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
@@ -15,4 +16,6 @@ public interface IReactor {
     public void enableWrite(SocketChannel channel);
 
     public void disableWrite(SocketChannel channel);
+
+    public void postWrite(SocketChannel channel,ByteBuffer data);
 }

@@ -232,4 +232,9 @@ public class Reactor implements IReactor {
             _lock.unlock();
         }
     }
+
+    @Override
+    public void postWrite(SocketChannel channel, ByteBuffer data) {
+        _handler.postWrite(channel, data, this);
+    }
 }
