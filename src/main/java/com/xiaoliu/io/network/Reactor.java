@@ -98,7 +98,7 @@ public class Reactor implements IReactor {
     }
 
     @Override
-    public void enableWrite(SocketChannel channel,ByteBuffer data) {
+    public void enableWrite(SocketChannel channel) {
         runInLoop(()->
         {
             _selector.keys()
@@ -106,7 +106,6 @@ public class Reactor implements IReactor {
             .filter(key -> key.channel() == channel)
             .peek((key)->
             {
-                _handler.postWrite(channel, data);
                 key.interestOpsOr(SelectionKey.OP_WRITE);
             });
         });

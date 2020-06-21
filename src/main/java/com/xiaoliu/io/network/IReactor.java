@@ -13,7 +13,7 @@ public interface IReactor {
 
     public void register(ServerSocketChannel channel);
 
-    public void enableWrite(SocketChannel channel,ByteBuffer data);
+    public void enableWrite(SocketChannel channel);
 
     public void disableWrite(SocketChannel channel);
 }

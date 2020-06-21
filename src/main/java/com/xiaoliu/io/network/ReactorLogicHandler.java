@@ -9,6 +9,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+/*import com.xiaoliu.io.network.ILogicHandler;
+import com.xiaoliu.io.network.IReactor;
+import com.xiaoliu.io.network.IReactorLogicHandler;
+import com.xiaoliu.io.network.WriteBuffer;*/
 
 public class ReactorLogicHandler implements IReactorLogicHandler {
 
@@ -60,14 +64,13 @@ public class ReactorLogicHandler implements IReactorLogicHandler {
             } 
             catch (ClosedChannelException e) 
             {
-                _handler.onClose(channel);
-                bufs.clear();
+                onClose(channel);
                 reactor.disableWrite(channel);
             }
             catch(IOException e)
             {
                 _handler.onError(e);
-                bufs.clear();
+                cleanBuffer(channel);
                 reactor.disableWrite(channel);
             }
             return;
@@ -78,18 +81,30 @@ public class ReactorLogicHandler implements IReactorLogicHandler {
 
     @Override
     public void onClose(SocketChannel channel) {
+        
         _handler.onClose(channel);
+        cleanBuffer(channel);
     }
 
     @Override
-    public void postWrite(SocketChannel channel, ByteBuffer data) {
+    public void postWrite(SocketChannel channel, ByteBuffer data,IReactor reactor) {
         if(_writeBuffers.containsKey(channel))
         {
             _writeBuffers.get(channel).add(new WriteBuffer(data));
+            reactor.enableWrite(channel);
             return;
         }
         List<WriteBuffer> buffers = new LinkedList<>();
         buffers.add(new WriteBuffer(data));
         _writeBuffers.put(channel,buffers);
+        reactor.enableWrite(channel);
+    }
+
+    private void cleanBuffer(SocketChannel channel)
+    {
+        if(_writeBuffers.containsKey(channel))
+        {
+            _writeBuffers.remove(channel);
+        }
     }
 }
