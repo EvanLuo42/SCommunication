@@ -24,11 +24,11 @@ MA 02110-1301  USA
 
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
+    <!--<parent>
         <groupId>com.vaushell</groupId>
         <artifactId>pom-library</artifactId>
         <version>3</version>
-    </parent>
+    </parent>-->
 
     <groupId>com.xiaoliu.io</groupId>
     <artifactId>SComunication</artifactId>
@@ -37,7 +37,7 @@ MA 02110-1301  USA
 
     <name>SComunication</name>
     <description>A small network library</description>
-    <url>https://github.com/fabienvauchelles/SComunication</url>
+    <url>https://github.com/SmallL-U/SComunication</url>
 
     <!--<licenses>
         <license>

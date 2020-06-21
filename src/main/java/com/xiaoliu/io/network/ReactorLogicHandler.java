@@ -9,16 +9,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-/*import com.xiaoliu.io.network.ILogicHandler;
-import com.xiaoliu.io.network.IReactor;
-import com.xiaoliu.io.network.IReactorLogicHandler;
-import com.xiaoliu.io.network.WriteBuffer;*/
 
 public class ReactorLogicHandler implements IReactorLogicHandler {
 
     private ILogicHandler _handler;
 
-    private Map<SocketChannel,List<WriteBuffer>> _writeBuffers;
+    private Map<SocketChannel,List<ByteBuffer>> _writeBuffers;
 
     public ReactorLogicHandler(ILogicHandler logicHandler)
     {
@@ -45,14 +41,14 @@ public class ReactorLogicHandler implements IReactorLogicHandler {
     public void onWrite(SocketChannel channel,IReactor reactor) {
         if (_writeBuffers.containsKey(channel)) 
         {
-            List<WriteBuffer> bufs = _writeBuffers.get(channel);
-            Iterator<WriteBuffer> begin = bufs.iterator();
-            WriteBuffer data = begin.next();
+            List<ByteBuffer> bufs = _writeBuffers.get(channel);
+            Iterator<ByteBuffer> begin = bufs.iterator();
+            ByteBuffer data = begin.next();
             try 
             {
-                int r = channel.write(data.getBuffer());
-                data.add(r);
-                if(data.isComplete())
+                int r = channel.write(data);
+                data.position(data.position() + r);
+                if(!data.hasRemaining())
                 {
                     _handler.onWriteCompletely(channel);
                     begin.remove();
@@ -90,12 +86,12 @@ public class ReactorLogicHandler implements IReactorLogicHandler {
     public void postWrite(SocketChannel channel, ByteBuffer data,IReactor reactor) {
         if(_writeBuffers.containsKey(channel))
         {
-            _writeBuffers.get(channel).add(new WriteBuffer(data));
+            _writeBuffers.get(channel).add(data);
             reactor.enableWrite(channel);
             return;
         }
-        List<WriteBuffer> buffers = new LinkedList<>();
-        buffers.add(new WriteBuffer(data));
+        List<ByteBuffer> buffers = new LinkedList<>();
+        buffers.add(data);
         _writeBuffers.put(channel,buffers);
         reactor.enableWrite(channel);
     }
