@@ -3,7 +3,8 @@ package com.xiaoliu.io.network;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
-public interface IServer {
+//服务器实现此接口
+public interface IServer extends ILogicHandler {
     public void run();
 
     public void stop();
