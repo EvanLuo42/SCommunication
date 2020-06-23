@@ -231,6 +231,7 @@ public class Reactor implements IReactor {
         {
             _lock.unlock();
         }
+        _selector.wakeup();
     }
 
     @Override

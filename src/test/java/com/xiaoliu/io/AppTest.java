@@ -19,12 +19,6 @@
 
 package com.xiaoliu.io;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
-import static org.testng.AssertJUnit.*;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
 /**
  * Unit test for simple App.
  *
@@ -38,28 +32,5 @@ public final class AppTest
         // Nothing
     }
 
-    /**
-     * Initialize the test.
-     *
-     * @throws ConfigurationException
-     */
-    @BeforeClass
-    public void setUp()
-        throws ConfigurationException
-    {
-        // My config
-        final XMLConfiguration config = new XMLConfiguration( "conf-local/configuration.xml" );
-    }
-
-    /**
-     * Test always true.
-     */
-    @Test
-    public void testApp()
-    {
-        assertEquals( "Always true !" ,
-                      1 ,
-                      1 );
-    }
     // PRIVATE
 }

@@ -15,6 +15,7 @@ public class HttpTestServer extends MultiThreadServer {
     @Override
     public void onRead(SocketChannel channel,ByteBuffer data)
     {
-        writeTo(channel, data);
+        ByteBuffer buf = ByteBuffer.wrap("HTTP/1.0 200 OK\r\nContent-Length: 11\r\n\r\nHello World".getBytes());
+        writeTo(channel,buf);
     }
 }

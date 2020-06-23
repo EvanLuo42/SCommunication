@@ -25,7 +25,7 @@ public abstract class MultiThreadServer implements IServer {
     public MultiThreadServer(int threadNumber,SocketAddress address) throws IOException
     {
         _serverChannel = ServerSocketChannel.open();
-        _serverChannel.socket().bind(address);
+        _serverChannel.socket().bind(address,65335);
         _mainReactor = new Reactor(new ReactorLogicHandler(this));
         if(threadNumber > 1)
         {
