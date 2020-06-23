@@ -60,7 +60,7 @@ public class Reactor implements IReactor {
         } 
         catch (IOException e) 
         {
-            _handler.onError(e);
+            _handler.onError(channel,e);
         }
         runInLoop(()->{
             try 
@@ -69,7 +69,7 @@ public class Reactor implements IReactor {
             } 
             catch (ClosedChannelException e) 
             {
-                _handler.onError(e);
+                _handler.onError(channel,e);
             }
         });
     }
@@ -82,7 +82,7 @@ public class Reactor implements IReactor {
         } 
         catch (IOException e) 
         {
-            _handler.onError(e);
+            _handler.onError(channel,e);
         }
         runInLoop(()->
         {
@@ -92,7 +92,7 @@ public class Reactor implements IReactor {
             } 
             catch (ClosedChannelException e) 
             {
-                _handler.onError(e);
+                _handler.onError(channel,e);
             }
         });
     }
@@ -178,7 +178,7 @@ public class Reactor implements IReactor {
                 } catch (ClosedChannelException e) {
                     _handler.onClose(channel);
                 } catch (IOException e) {
-                    _handler.onError(e);
+                    _handler.onError(channel,e);
                 }
             } else if (key.isWritable()) {
                 SocketChannel channel = (SocketChannel) key.channel();
@@ -187,8 +187,8 @@ public class Reactor implements IReactor {
                 ServerSocketChannel channel = (ServerSocketChannel) key.channel();
                 try {
                     _handler.onAccept(channel.accept());
-                } catch (final Exception e) {
-                    _handler.onError(e);
+                } catch (Exception e) {
+                    _handler.onError(channel,e);
                 }
             } else {
                 if (key.channel() instanceof SocketChannel) {

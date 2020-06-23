@@ -1,10 +1,15 @@
 package com.xiaoliu.io.network;
 
 import java.nio.ByteBuffer;
+import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
 public interface ILogicHandler {
     public void onError(Exception err);
+
+    public void onError(ServerSocketChannel channel,Exception err);
+
+    public void onError(SocketChannel channel,Exception err);
 
     public void onAccept(SocketChannel channel);
 

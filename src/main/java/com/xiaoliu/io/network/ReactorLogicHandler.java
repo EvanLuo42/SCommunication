@@ -3,6 +3,7 @@ package com.xiaoliu.io.network;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
+import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,17 +15,16 @@ public class ReactorLogicHandler implements IReactorLogicHandler {
 
     private ILogicHandler _handler;
 
-    private Map<SocketChannel,List<ByteBuffer>> _writeBuffers;
+    private Map<SocketChannel, List<ByteBuffer>> _writeBuffers;
 
-    public ReactorLogicHandler(ILogicHandler logicHandler)
-    {
+    public ReactorLogicHandler(ILogicHandler logicHandler) {
         _handler = logicHandler;
         _writeBuffers = new HashMap<>();
     }
 
     @Override
-    public void onError(Exception err) {
-        _handler.onError(err);
+    public void onError(SocketChannel channel, Exception err) {
+        _handler.onError(channel, err);
     }
 
     @Override
@@ -34,38 +34,30 @@ public class ReactorLogicHandler implements IReactorLogicHandler {
 
     @Override
     public void onRead(SocketChannel channel, ByteBuffer data) {
-        _handler.onRead(channel,data);
+        _handler.onRead(channel, data);
     }
 
     @Override
-    public void onWrite(SocketChannel channel,IReactor reactor) {
-        if (_writeBuffers.containsKey(channel)) 
-        {
+    public void onWrite(SocketChannel channel, IReactor reactor) {
+        if (_writeBuffers.containsKey(channel)) {
             List<ByteBuffer> bufs = _writeBuffers.get(channel);
             Iterator<ByteBuffer> begin = bufs.iterator();
             ByteBuffer data = begin.next();
-            try 
-            {
+            try {
                 int r = channel.write(data);
                 data.position(data.position() + r);
-                if(!data.hasRemaining())
-                {
+                if (!data.hasRemaining()) {
                     _handler.onWriteCompletely(channel);
                     begin.remove();
-                    if(!begin.hasNext())
-                    {
+                    if (!begin.hasNext()) {
                         reactor.disableWrite(channel);
                     }
                 }
-            } 
-            catch (ClosedChannelException e) 
-            {
+            } catch (ClosedChannelException e) {
                 onClose(channel);
                 reactor.disableWrite(channel);
-            }
-            catch(IOException e)
-            {
-                _handler.onError(e);
+            } catch (IOException e) {
+                _handler.onError(channel, e);
                 cleanBuffer(channel);
                 reactor.disableWrite(channel);
             }
@@ -77,30 +69,37 @@ public class ReactorLogicHandler implements IReactorLogicHandler {
 
     @Override
     public void onClose(SocketChannel channel) {
-        
+
         _handler.onClose(channel);
         cleanBuffer(channel);
     }
 
     @Override
-    public void postWrite(SocketChannel channel, ByteBuffer data,IReactor reactor) {
-        if(_writeBuffers.containsKey(channel))
-        {
+    public void postWrite(SocketChannel channel, ByteBuffer data, IReactor reactor) {
+        if (_writeBuffers.containsKey(channel)) {
             _writeBuffers.get(channel).add(data);
             reactor.enableWrite(channel);
             return;
         }
         List<ByteBuffer> buffers = new LinkedList<>();
         buffers.add(data);
-        _writeBuffers.put(channel,buffers);
+        _writeBuffers.put(channel, buffers);
         reactor.enableWrite(channel);
     }
 
-    private void cleanBuffer(SocketChannel channel)
-    {
-        if(_writeBuffers.containsKey(channel))
-        {
+    private void cleanBuffer(SocketChannel channel) {
+        if (_writeBuffers.containsKey(channel)) {
             _writeBuffers.remove(channel);
         }
+    }
+
+    @Override
+    public void onError(ServerSocketChannel channel, Exception err) {
+        _handler.onError(channel,err);
+    }
+
+    @Override
+    public void onError(Exception err) {
+        _handler.onError(err);
     }
 }
