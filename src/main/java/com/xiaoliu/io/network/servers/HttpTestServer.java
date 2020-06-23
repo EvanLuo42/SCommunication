@@ -18,4 +18,17 @@ public class HttpTestServer extends MultiThreadServer {
         ByteBuffer buf = ByteBuffer.wrap("HTTP/1.0 200 OK\r\nContent-Length: 11\r\n\r\nHello World".getBytes());
         writeTo(channel,buf);
     }
+
+    @Override
+    public void onWriteCompletely(SocketChannel channel)
+    {
+        try
+        {
+            channel.close();
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
 }
