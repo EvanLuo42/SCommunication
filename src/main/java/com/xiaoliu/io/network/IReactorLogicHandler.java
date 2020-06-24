@@ -20,4 +20,6 @@ public interface IReactorLogicHandler {
     public void onClose(SocketChannel channel);
 
     public void postWrite(SocketChannel channel,ByteBuffer data,IReactor reactor);
+
+    public void closeChannel(SocketChannel channel);
 }

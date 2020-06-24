@@ -25,4 +25,6 @@ public interface IReactor {
 
     //投递写请求(call me!)
     public void postWrite(SocketChannel channel,ByteBuffer data);
+
+    public void close(SocketChannel channel);
 }

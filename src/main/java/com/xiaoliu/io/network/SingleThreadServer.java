@@ -89,4 +89,9 @@ public abstract class SingleThreadServer implements IServer {
         _reactor.postWrite(channel, data);
     }
     
+    @Override
+    public void close(SocketChannel channel)
+    {
+        _reactor.close(channel);
+    }
 }

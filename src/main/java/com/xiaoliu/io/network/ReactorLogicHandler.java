@@ -48,7 +48,6 @@ public class ReactorLogicHandler implements IReactorLogicHandler {
                 int r = channel.write(data);
                 data.position(data.position() + r);
                 if (!data.hasRemaining()) {
-                    
                     bufs.remove(0);
                     if(bufs.isEmpty())
                     {
@@ -104,5 +103,19 @@ public class ReactorLogicHandler implements IReactorLogicHandler {
     @Override
     public void onError(Exception err) {
         _handler.onError(err);
+    }
+
+    @Override
+    public void closeChannel(SocketChannel channel) {
+        cleanBuffer(channel);
+        try 
+        {
+            channel.close();
+            onClose(channel);
+        } 
+        catch (Exception e)
+        {
+            onError(channel,e);
+        }
     }
 }

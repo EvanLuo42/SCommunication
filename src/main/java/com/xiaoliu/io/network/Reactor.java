@@ -247,4 +247,9 @@ public class Reactor implements IReactor {
     public void postWrite(SocketChannel channel, ByteBuffer data) {
         _handler.postWrite(channel, data, this);
     }
+
+    @Override
+    public void close(SocketChannel channel) {
+        _handler.closeChannel(channel);
+    }
 }

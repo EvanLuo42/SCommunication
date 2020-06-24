@@ -10,4 +10,6 @@ public interface IServer extends ILogicHandler {
     public void stop();
 
     public void writeTo(SocketChannel channel,ByteBuffer data);
+
+    public void close(SocketChannel channel);
 }
