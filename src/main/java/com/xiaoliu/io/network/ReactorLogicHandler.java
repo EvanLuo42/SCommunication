@@ -6,16 +6,18 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReactorLogicHandler implements IReactorLogicHandler {
 
     private ILogicHandler _handler;
 
     private Map<SocketChannel, List<ByteBuffer>> _writeBuffers;
+
+    private AtomicInteger tag = new AtomicInteger(0);
 
     public ReactorLogicHandler(ILogicHandler logicHandler) {
         _handler = logicHandler;
@@ -41,25 +43,27 @@ public class ReactorLogicHandler implements IReactorLogicHandler {
     public void onWrite(SocketChannel channel, IReactor reactor) {
         if (_writeBuffers.containsKey(channel)) {
             List<ByteBuffer> bufs = _writeBuffers.get(channel);
-            Iterator<ByteBuffer> begin = bufs.iterator();
-            ByteBuffer data = begin.next();
+            ByteBuffer data = bufs.get(0);
             try {
                 int r = channel.write(data);
                 data.position(data.position() + r);
                 if (!data.hasRemaining()) {
-                    _handler.onWriteCompletely(channel);
-                    begin.remove();
-                    if (!begin.hasNext()) {
+                    
+                    bufs.remove(0);
+                    if(bufs.isEmpty())
+                    {
                         reactor.disableWrite(channel);
                     }
+                    _handler.onWriteCompletely(channel);
                 }
             } catch (ClosedChannelException e) {
-                onClose(channel);
-                reactor.disableWrite(channel);
-            } catch (IOException e) {
-                _handler.onError(channel, e);
                 cleanBuffer(channel);
                 reactor.disableWrite(channel);
+                onClose(channel);
+            } catch (IOException e) {
+                cleanBuffer(channel);
+                reactor.disableWrite(channel);
+                _handler.onError(channel, e);
             }
             return;
         }
@@ -69,9 +73,8 @@ public class ReactorLogicHandler implements IReactorLogicHandler {
 
     @Override
     public void onClose(SocketChannel channel) {
-
-        _handler.onClose(channel);
         cleanBuffer(channel);
+        _handler.onClose(channel);
     }
 
     @Override

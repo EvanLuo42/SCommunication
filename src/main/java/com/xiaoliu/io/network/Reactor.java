@@ -101,13 +101,15 @@ public class Reactor implements IReactor {
     public void enableWrite(SocketChannel channel) {
         runInLoop(()->
         {
-            _selector.keys()
-            .stream()
-            .filter(key -> key.channel() == channel)
-            .peek((key)->
+            Iterator<SelectionKey> ite = _selector.keys().iterator();
+            while(ite.hasNext())
             {
-                key.interestOpsOr(SelectionKey.OP_WRITE);
-            });
+                SelectionKey key = ite.next();
+                if(key.channel() == channel)
+                {
+                    key.interestOpsOr(SelectionKey.OP_WRITE);
+                }
+            }
         });
     }
 
@@ -115,10 +117,17 @@ public class Reactor implements IReactor {
     public void disableWrite(SocketChannel channel) {
         runInLoop(()->
         {
-            _selector.keys()
-            .stream()
-            .filter(key -> key.channel() == channel)
-            .peek(key -> key.interestOpsAnd(~SelectionKey.OP_WRITE));
+            Iterator<SelectionKey> ite = _selector.keys().iterator();
+            while(ite.hasNext())
+            {
+                SelectionKey key = ite.next();
+                if(key.channel() == channel)
+                {
+                    int ops = key.interestOps();
+                    ops ^= SelectionKey.OP_WRITE;
+                    key.interestOps(ops);
+                }
+            }
         });
     }
 
