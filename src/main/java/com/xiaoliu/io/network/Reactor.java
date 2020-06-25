@@ -139,8 +139,11 @@ public class Reactor implements IReactor {
         Selector selector = Selector.open();
         // 将原来selector的key移动到新建的selector上
         for (SelectionKey key : _selector.keys()) {
-            key.channel().register(selector, key.interestOps());
-            key.cancel();
+            if(key != null && key.isValid())
+            {
+                key.channel().register(selector, key.interestOps());
+                key.cancel();
+            }
         }
         // 交换两个selector
         Selector tmp = _selector;
@@ -178,7 +181,7 @@ public class Reactor implements IReactor {
     private void handleEvent(SelectionKey key) {
         if (key.isValid()) {
             if (key.isReadable()) {
-                ByteBuffer buf = ByteBuffer.allocate(4096);
+                ByteBuffer buf = ByteBuffer.allocateDirect(4096);
                 SocketChannel channel = (SocketChannel) key.channel();
                 try {
                     channel.read(buf);
