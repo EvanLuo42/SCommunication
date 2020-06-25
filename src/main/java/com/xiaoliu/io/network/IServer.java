@@ -11,5 +11,5 @@ public interface IServer extends ILogicHandler {
 
     public void writeTo(SocketChannel channel,ByteBuffer data);
 
-    public void close(SocketChannel channel);
+    public void closeChannel(SocketChannel channel);
 }

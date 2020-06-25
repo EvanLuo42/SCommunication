@@ -17,8 +17,6 @@ public class ReactorLogicHandler implements IReactorLogicHandler {
 
     private Map<SocketChannel, List<ByteBuffer>> _writeBuffers;
 
-    private AtomicInteger tag = new AtomicInteger(0);
-
     public ReactorLogicHandler(ILogicHandler logicHandler) {
         _handler = logicHandler;
         _writeBuffers = new HashMap<>();
@@ -50,7 +48,6 @@ public class ReactorLogicHandler implements IReactorLogicHandler {
                 {
                     throw new ClosedChannelException();
                 }
-                //data.position(data.position() + r);
                 if (!data.hasRemaining()) {
                     bufs.remove(0);
                     if(bufs.isEmpty())

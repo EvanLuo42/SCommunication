@@ -28,7 +28,7 @@ public class HttpTestServer extends MultiThreadServer {
     public void onWriteCompletely(SocketChannel channel)
     {
         System.out.println(tag.getAndIncrement());
-        close(channel);
+        closeChannel(channel);
     }
 
     @Override

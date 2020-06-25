@@ -90,7 +90,7 @@ public abstract class SingleThreadServer implements IServer {
     }
     
     @Override
-    public void close(SocketChannel channel)
+    public void closeChannel(SocketChannel channel)
     {
         _reactor.close(channel);
     }
