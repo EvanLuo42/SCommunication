@@ -108,6 +108,7 @@ public class Reactor implements IReactor {
                 if(key.channel() == channel)
                 {
                     key.interestOpsOr(SelectionKey.OP_WRITE);
+                    return;
                 }
             }
         });
@@ -123,9 +124,7 @@ public class Reactor implements IReactor {
                 SelectionKey key = ite.next();
                 if(key.channel() == channel)
                 {
-                    int ops = key.interestOps();
-                    ops ^= SelectionKey.OP_WRITE;
-                    key.interestOps(ops);
+                    key.interestOpsAnd(~SelectionKey.OP_WRITE);
                 }
             }
         });
@@ -250,6 +249,8 @@ public class Reactor implements IReactor {
 
     @Override
     public void close(SocketChannel channel) {
-        _handler.closeChannel(channel);
+        runInLoop(()->{
+            _handler.closeChannel(channel);
+        });
     }
 }

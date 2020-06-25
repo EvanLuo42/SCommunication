@@ -2,6 +2,7 @@ package com.xiaoliu.io.network.servers;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -27,26 +28,24 @@ public class HttpTestServer extends MultiThreadServer {
     public void onWriteCompletely(SocketChannel channel)
     {
         System.out.println(tag.getAndIncrement());
-        try
-        {
-            channel.close();
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
+        close(channel);
     }
 
     @Override
     public void onError(SocketChannel channel,Exception err)
     {
-        try
-        {
-            channel.close();
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
+        err.printStackTrace();
+    }
+
+    @Override
+    public void onError(Exception err)
+    {
+        err.printStackTrace();
+    }
+
+    @Override
+    public void onError(ServerSocketChannel channel,Exception err)
+    {
+        err.printStackTrace();
     }
 }

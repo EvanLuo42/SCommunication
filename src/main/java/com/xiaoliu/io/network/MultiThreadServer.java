@@ -54,7 +54,7 @@ public abstract class MultiThreadServer implements IServer {
             {
                 hash = -hash;
             }
-            int pos = hash % (_reactors.size() + 1);
+            int pos = hash % (_reactors.size()+1);
             if(pos < _reactors.size())
             {
                 return _reactors.get(pos);
@@ -130,7 +130,7 @@ public abstract class MultiThreadServer implements IServer {
         } 
         catch (IOException e) 
         {
-            onError(e);
+            onError(_serverChannel,e);
         }
     }
 

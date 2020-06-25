@@ -46,7 +46,11 @@ public class ReactorLogicHandler implements IReactorLogicHandler {
             ByteBuffer data = bufs.get(0);
             try {
                 int r = channel.write(data);
-                data.position(data.position() + r);
+                if(r < 0)
+                {
+                    throw new ClosedChannelException();
+                }
+                //data.position(data.position() + r);
                 if (!data.hasRemaining()) {
                     bufs.remove(0);
                     if(bufs.isEmpty())
@@ -111,7 +115,6 @@ public class ReactorLogicHandler implements IReactorLogicHandler {
         try 
         {
             channel.close();
-            onClose(channel);
         } 
         catch (Exception e)
         {
