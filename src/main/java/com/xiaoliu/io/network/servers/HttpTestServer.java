@@ -34,7 +34,11 @@ public class HttpTestServer extends MultiThreadServer {
     @Override
     public void onError(SocketChannel channel,Exception err)
     {
-        err.printStackTrace();
+        try {
+            System.err.println(channel.getLocalAddress()+err.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         closeChannel(channel);
     }
 

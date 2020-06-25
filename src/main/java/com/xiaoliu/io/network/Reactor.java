@@ -107,7 +107,7 @@ public class Reactor implements IReactor {
                 SelectionKey key = ite.next();
                 if(key != null && key.isValid() && key.channel() == channel)
                 {
-                    key.interestOpsOr(SelectionKey.OP_WRITE);
+                    key.interestOps(SelectionKey.OP_WRITE);
                     return;
                 }
             }
@@ -124,7 +124,9 @@ public class Reactor implements IReactor {
                 SelectionKey key = ite.next();
                 if(key != null && key.isValid() && key.channel() == channel)
                 {
-                    key.interestOpsAnd(~SelectionKey.OP_WRITE);
+                    int ops = key.interestOps();
+                    ops ^= SelectionKey.OP_WRITE;
+                    key.interestOps(ops);
                 }
             }
         });
