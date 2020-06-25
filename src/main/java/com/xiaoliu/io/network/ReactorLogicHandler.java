@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReactorLogicHandler implements IReactorLogicHandler {
 
@@ -111,7 +110,10 @@ public class ReactorLogicHandler implements IReactorLogicHandler {
         cleanBuffer(channel);
         try 
         {
-            channel.close();
+            if(channel.isOpen())
+            {
+                channel.close();
+            }
         } 
         catch (Exception e)
         {

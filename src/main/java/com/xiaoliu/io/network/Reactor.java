@@ -105,7 +105,7 @@ public class Reactor implements IReactor {
             while(ite.hasNext())
             {
                 SelectionKey key = ite.next();
-                if(key.isValid() && key.channel() == channel)
+                if(key != null && key.isValid() && key.channel() == channel)
                 {
                     key.interestOpsOr(SelectionKey.OP_WRITE);
                     return;
@@ -122,7 +122,7 @@ public class Reactor implements IReactor {
             while(ite.hasNext())
             {
                 SelectionKey key = ite.next();
-                if(key.isValid() && key.channel() == channel)
+                if(key != null && key.isValid() && key.channel() == channel)
                 {
                     key.interestOpsAnd(~SelectionKey.OP_WRITE);
                 }
@@ -248,7 +248,7 @@ public class Reactor implements IReactor {
     }
 
     @Override
-    public void close(SocketChannel channel) {
+    public void closeChannel(SocketChannel channel) {
         runInLoop(()->{
             _handler.closeChannel(channel);
         });

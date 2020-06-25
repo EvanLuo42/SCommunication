@@ -144,6 +144,6 @@ public abstract class MultiThreadServer implements IServer {
     public void closeChannel(SocketChannel channel)
     {
         IReactor reactor = dispathReactor(channel);
-        reactor.close(channel);
+        reactor.closeChannel(channel);
     }
 }
