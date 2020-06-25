@@ -1,7 +1,6 @@
 package com.xiaoliu.io.network.servers;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
@@ -36,10 +35,7 @@ public class HttpTestServer extends MultiThreadServer {
     public void onError(SocketChannel channel,Exception err)
     {
         err.printStackTrace();
-        if(channel.isOpen())
-        {
-            closeChannel(channel);
-        }
+        closeChannel(channel);
     }
 
     @Override
