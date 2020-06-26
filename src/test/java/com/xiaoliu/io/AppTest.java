@@ -26,11 +26,8 @@ package com.xiaoliu.io;
  */
 public final class AppTest
 {
-    // PUBLIC
     public AppTest()
     {
-        // Nothing
+        
     }
-
-    // PRIVATE
 }
