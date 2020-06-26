@@ -2,6 +2,7 @@
 A Simple Network Library
 ## Using
 ### MultiThreadServer
+#### Create your server
 ```java
 //extends MultiThreadServer
 public class EchoServer extends MultiThreadServer {
@@ -59,7 +60,29 @@ public class EchoServer extends MultiThreadServer {
     }
 }
 ```
+#### Run your server in Main function
+```java
+public class App {
+    public static void main(String[] args) {
+        try 
+        {
+            IServer server = new EchoServer(Runtime.getRuntime().availableProcessors(), 8080);
+            System.out.printf("Server listening on %d with %d threads\n",8080,Runtime.getRuntime().availableProcessors());
+            Runtime.getRuntime().addShutdownHook(new ServerCloseHookThread(server,()->
+            {
+                System.out.println("Server closed");
+            }));
+            server.run();
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
+    }
+}
+```
 ### SingleThreadServer
+#### Create your server
 ```java
 //extends SingleThreadServer
 public class EchoServer extends SingleThreadServer {
@@ -114,6 +137,27 @@ public class EchoServer extends SingleThreadServer {
     {
         //close channel safely
         closeChannel(channel);
+    }
+}
+```
+#### Run your server in Main function
+```java
+public class App {
+    public static void main(String[] args) {
+        try 
+        {
+            IServer server = new EchoServer(8080);
+            System.out.printf("Server listening on %d with single thread\n",8080);
+            Runtime.getRuntime().addShutdownHook(new ServerCloseHookThread(server,()->
+            {
+                System.out.println("Server closed");
+            }));
+            server.run();
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
     }
 }
 ```
